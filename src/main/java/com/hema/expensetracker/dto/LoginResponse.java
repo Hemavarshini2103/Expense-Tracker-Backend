@@ -4,6 +4,7 @@ public class LoginResponse {
 
     private String token;
     private String message;
+    private int userId;
 
     public String getToken() {
         return token;
@@ -19,5 +20,12 @@ public class LoginResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

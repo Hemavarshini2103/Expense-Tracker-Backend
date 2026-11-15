@@ -7,23 +7,28 @@ import com.hema.expensetracker.service.BudgetService;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
-
+import com.hema.expensetracker.service.AuthService;
+import org.springframework.security.core.Authentication;
 @RestController
 @RequestMapping("/budget")
 public class BudgetController {
 
     private final BudgetService budgetService;
+    private final AuthService authService;
 
     // Constructor Injection
-    public BudgetController(BudgetService budgetService) {
+    public BudgetController(BudgetService budgetService, AuthService authService) {
         this.budgetService = budgetService;
+        this.authService = authService;
     }
 
     // Set Budget
-    @PostMapping("/set/{userId}")
+    @PostMapping("/set")
     public String setBudget(
-            @PathVariable int userId,
+            Authentication authentication,
             @Valid @RequestBody BudgetRequest request) {
+
+        int userId = authService.getUserId(authentication.getName());
 
         budgetService.setBudget(userId, request);
 
@@ -31,9 +36,10 @@ public class BudgetController {
     }
 
     // Get Budget Status
-    @GetMapping("/status/{userId}")
-    public BudgetResponse getBudgetStatus(
-            @PathVariable int userId) {
+    @GetMapping("/status")
+    public BudgetResponse getBudgetStatus(Authentication authentication) {
+
+        int userId = authService.getUserId(authentication.getName());
 
         return budgetService.getBudgetStatus(userId);
     }

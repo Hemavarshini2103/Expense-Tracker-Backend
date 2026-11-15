@@ -42,4 +42,12 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
             ORDER BY YEAR(e.expenseDate), MONTH(e.expenseDate)
             """)
     List<Object[]> getMonthlySummary(@Param("userId") int userId);
+    @Query("""
+            SELECT COALESCE(SUM(e.amount), 0)
+            FROM Expense e
+            WHERE e.user.id = :userId
+              AND YEAR(e.expenseDate) = YEAR(CURRENT_DATE)
+              AND MONTH(e.expenseDate) = MONTH(CURRENT_DATE)
+            """)
+    double getCurrentMonthExpenseByUser(@Param("userId") int userId);
 }

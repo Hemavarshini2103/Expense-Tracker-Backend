@@ -31,6 +31,7 @@ public class AuthController {
         LoginResponse response = new LoginResponse();
         response.setToken(token);
         response.setMessage("Login successful");
+        response.setUserId(authService.getUserId(request.getEmail()));
 
         return response;
     }

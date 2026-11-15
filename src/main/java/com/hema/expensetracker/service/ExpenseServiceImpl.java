@@ -57,19 +57,13 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
     @Override
     public Expense getExpenseById(Long id) {
-
-        return expenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expense not found"));
+        return getUserExpense(id);
     }
 
     // Update Expense
     @Override
     public Expense updateExpense(Long id, Expense expense) {
-
-        Expense existingExpense = expenseRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Expense not found with id : " + id));
+    	Expense existingExpense = getUserExpense(id);
 
         existingExpense.setTitle(expense.getTitle());
         existingExpense.setAmount(expense.getAmount());
@@ -83,10 +77,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public void deleteExpense(Long id) {
 
-        Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Expense not found with id : " + id));
+    	Expense expense = getUserExpense(id);
 
         expenseRepository.delete(expense);
     }
@@ -188,5 +179,19 @@ public class ExpenseServiceImpl implements ExpenseService {
         response.setUserId(expense.getUser().getId());
 
         return response;
+    }
+    private Expense getUserExpense(Long id) {
+
+        User user = securityUtil.getCurrentUser();
+
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Expense not found"));
+
+        if (expense.getUser().getId() != user.getId()) {
+            throw new ResourceNotFoundException("Expense not found");
+        }
+
+        return expense;
     }
 }

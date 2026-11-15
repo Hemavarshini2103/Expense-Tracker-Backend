@@ -50,7 +50,7 @@ public class BudgetServiceImpl implements BudgetService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Budget not found"));
 
-        double spent = expenseRepository.getTotalExpenseByUser(userId);
+        double spent = expenseRepository.getCurrentMonthExpenseByUser(userId);
 
         BudgetResponse response = new BudgetResponse();
 
